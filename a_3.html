@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		
+ <script type = "text/javascript"> 
+ $(document).ready( function(){
+ 
+   $("button").click(function(){ 
+   
+     var zip = $("#zip").val();
+	 
+     if(zip != ''){
+         
+		 $.ajax({
+             type: 		"GET",
+             url: 		"a_3.php",
+             data: 		"zip="+zip,
+             
+             
+		     beforeSend: function(){ 		
+			                  $("#B").html("<div class=\'loader\'></div>");
+                        },
+
+         
+			 error: 		function(xhr, status, error) {  
+							  alert( "Error Mesaage:  \r\nNumeric code is: "  + xhr.status + " \r\nError is " + error);
+                alert("Invalid zipcode. Please try again!");
+          
+                 },
+			 
+			 success: 	function(result){
+				  
+				r = JSON.parse(result);
+        d = r.dt;
+        var myDate = new Date (d * 1000);
+        readableDate = myDate.toLocaleString();
+        
+    
+        var fahrenheit = r.main.temp * 1.8 + 32;
+
+				res =  "<br>Country: "			  			+ r.sys.country+  " "			  +
+              "<br>City: "			                + r.name+  " "				      +
+              "<br><br>" + fahrenheit + "&deg;F" +
+              "<br>Description: "		+ r.weather[0].description+ " "	  +	 
+            "<br>Coordinates: " +      r.coord.lat + ", " + r.coord.lon + " " + 
+            "<br><br>" + r.weather[0].main + ": " + r.weather[0].description + 
+            "<br>" + "<img src='http://openweathermap.org/img/w/" + r.weather[0].icon + ".png" + "'>" +
+            "<br>Humidity: " + r.main.humidity + "%" + 
+					   "<br><br>Wind Speed: "			  		+ r.wind.speed+  " m/h "		  +
+					   "<br>Sunrise: "                      + (r.sys.sunrise) + " "           +
+             "<br>Sunset: "                      + (r.sys.sunset) + " "           +
+             "<br><br>Date: "                      + (r.dt) + " "           +
+					   "<br><br>";
+				
+				$("#B").html(res);
+        
+      
+			}	
+		});	
+        
+     };			
+  });			
+});				
+     
+</script>
+</head>
+<style>
+    body {background-image: url(wall.jpg); background-color: black; background-size: cover; background-repeat: no-repeat, repeat;}
+    head, body { text-align: center; color: white; font-size: 30px; }
+    h2 { text-align: center;}
+    #B { font-size: 20px; outline-style: groove; margin: 20px; background: black; opacity: 0.6; font-weight: bold; color: white; }
+  
+
+.loader {
+  border: 16px solid black;
+  border-top: 16px solid white; 
+  border-radius: 50%;
+  width: 55px;
+  height: 55px;
+  animation: spin 2s linear infinite;
+  position: fixed;
+  left: 50%;
+  margin-left: -3em;
+  margin-top: 1em;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+</style>
+<body>
+<h2> IT 202 Weather Report</h2>   
+<input 	id = "zip" type = "number" name = "zip" placeholder="Zipcode" autocomplete="off" min="0" required>
+<button id = "btn" type = "BUTTON"><b>REQUEST WEATHER</b></button>
+<div id= "B"></div>
+</body>
+
+</html>
